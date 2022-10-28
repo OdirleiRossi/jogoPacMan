@@ -2,7 +2,7 @@
 
 import 'dart:math';
 
-import 'package:aprendizado/fantasma.dart';
+import 'package:aprendizado/fantasmas.dart';
 import 'package:aprendizado/path.dart';
 import 'package:aprendizado/pixel.dart';
 import 'package:aprendizado/player.dart';
@@ -17,7 +17,10 @@ class _HomePageState extends State<HomePage> {
   static int numeroColunas = 11;
   int numeroQuadrados = numeroColunas * 14;
   int player = numeroColunas * 12 + 1;
-  int posicaoFantasma = 12;
+  int posicaoFantasmaVermelho = 12;
+  int posicaoFantasmaVerde = 20;
+  int posicaoFantasmaRosa = 141;
+  int posicaoFantasmaAmarelo = 60;
   //int valorAleatorio = Random().nextInt(3);
 
   List<int> barreiras = [
@@ -168,7 +171,10 @@ class _HomePageState extends State<HomePage> {
         player--;
         direcao = 'esquerda';
         bocaFechada = !bocaFechada;
-        moveFantasma();
+        posicaoFantasmaVermelho = moveFantasma(posicaoFantasmaVermelho);
+        posicaoFantasmaVerde = moveFantasma(posicaoFantasmaVerde);
+        posicaoFantasmaRosa = moveFantasma(posicaoFantasmaRosa);
+        posicaoFantasmaAmarelo = moveFantasma(posicaoFantasmaAmarelo);
         if (alvo.contains(player)) {
           alvo.remove(player);
         }
@@ -182,7 +188,10 @@ class _HomePageState extends State<HomePage> {
         player++;
         direcao = 'direite';
         bocaFechada = !bocaFechada;
-        moveFantasma();
+        posicaoFantasmaVermelho = moveFantasma(posicaoFantasmaVermelho);
+        posicaoFantasmaVerde = moveFantasma(posicaoFantasmaVerde);
+        posicaoFantasmaRosa = moveFantasma(posicaoFantasmaRosa);
+        posicaoFantasmaAmarelo = moveFantasma(posicaoFantasmaAmarelo);
         if (alvo.contains(player)) {
           alvo.remove(player);
         }
@@ -196,7 +205,10 @@ class _HomePageState extends State<HomePage> {
         player -= numeroColunas;
         direcao = 'cima';
         bocaFechada = !bocaFechada;
-        moveFantasma();
+        posicaoFantasmaVermelho = moveFantasma(posicaoFantasmaVermelho);
+        posicaoFantasmaVerde = moveFantasma(posicaoFantasmaVerde);
+        posicaoFantasmaRosa = moveFantasma(posicaoFantasmaRosa);
+        posicaoFantasmaAmarelo = moveFantasma(posicaoFantasmaAmarelo);
         if (alvo.contains(player)) {
           alvo.remove(player);
         }
@@ -210,7 +222,10 @@ class _HomePageState extends State<HomePage> {
         player += numeroColunas;
         direcao = 'baixo';
         bocaFechada = !bocaFechada;
-        moveFantasma();
+        posicaoFantasmaVermelho = moveFantasma(posicaoFantasmaVermelho);
+        posicaoFantasmaVerde = moveFantasma(posicaoFantasmaVerde);
+        posicaoFantasmaRosa = moveFantasma(posicaoFantasmaRosa);
+        posicaoFantasmaAmarelo = moveFantasma(posicaoFantasmaAmarelo);
         if (alvo.contains(player)) {
           alvo.remove(player);
         }
@@ -218,7 +233,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void moveFantasma() {
+  moveFantasma(int posicaoFantasma) {
     for (int i = 1; i < 4; i++) {
       bool movimento = false;
 
@@ -254,11 +269,10 @@ class _HomePageState extends State<HomePage> {
             }
             break;
         }
-        print(valorAleatorio);
-        print(movimento);
-        print(i);
+        print(posicaoFantasma);
       }
     }
+    return posicaoFantasma;
   }
 
   @override
@@ -269,7 +283,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Expanded(
             //expande para o tamanho máximo da tela
-            flex: 10, //proporção 1/10 para os demais widget
+            flex: 6, //proporção 1/10 para os demais widget
 
             child: GridView.builder(
               //cria a grade 15x300
@@ -309,8 +323,14 @@ class _HomePageState extends State<HomePage> {
                     default:
                       return MyPlayer();
                   }
-                } else if (posicaoFantasma == index) {
-                  return MyGhost();
+                } else if (posicaoFantasmaVermelho == index) {
+                  return MyGhostVermelho();
+                } else if (posicaoFantasmaVerde == index) {
+                  return MyGhostVerde();
+                } else if (posicaoFantasmaRosa == index) {
+                  return MyGhostRosa();
+                } else if (posicaoFantasmaAmarelo == index) {
+                  return MyGhostAmarelo();
                 } else if (barreiras.contains(index)) {
                   return Mypixel(
                       innerColor: Colors.blue[800],
@@ -340,21 +360,33 @@ class _HomePageState extends State<HomePage> {
                   child: Text('PLAY',
                       style: TextStyle(color: Colors.white, fontSize: 30))),
               GestureDetector(
-                  onTap: moveDireita,
-                  child: Text('D',
-                      style: TextStyle(color: Colors.white, fontSize: 30))),
-              GestureDetector(
                   onTap: moveEsquerda,
-                  child: Text("E",
-                      style: TextStyle(color: Colors.white, fontSize: 30))),
+                  child: Icon(
+                    Icons.arrow_left,
+                    color: Colors.yellow,
+                    size: 70,
+                  )),
+              GestureDetector(
+                  onTap: moveDireita,
+                  child: Icon(
+                    Icons.arrow_right,
+                    color: Colors.yellow,
+                    size: 70,
+                  )),
               GestureDetector(
                   onTap: moveCima,
-                  child: Text('C',
-                      style: TextStyle(color: Colors.white, fontSize: 30))),
+                  child: Icon(
+                    Icons.arrow_drop_up,
+                    color: Colors.yellow,
+                    size: 70,
+                  )),
               GestureDetector(
                   onTap: moveBaixo,
-                  child: Text("B",
-                      style: TextStyle(color: Colors.white, fontSize: 30)))
+                  child: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.yellow,
+                    size: 70,
+                  ))
             ],
           )),
         ],
