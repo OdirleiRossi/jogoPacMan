@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:aprendizado/fantasma.dart';
 import 'package:aprendizado/path.dart';
 import 'package:aprendizado/pixel.dart';
 import 'package:aprendizado/player.dart';
@@ -16,6 +17,8 @@ class _HomePageState extends State<HomePage> {
   static int numeroColunas = 11;
   int numeroQuadrados = numeroColunas * 14;
   int player = numeroColunas * 12 + 1;
+  int posicaoFantasma = 12;
+  //int valorAleatorio = Random().nextInt(3);
 
   List<int> barreiras = [
     0,
@@ -165,6 +168,7 @@ class _HomePageState extends State<HomePage> {
         player--;
         direcao = 'esquerda';
         bocaFechada = !bocaFechada;
+        moveFantasma();
         if (alvo.contains(player)) {
           alvo.remove(player);
         }
@@ -177,7 +181,8 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         player++;
         direcao = 'direite';
-        bocaFechada = !bocaFechada;       
+        bocaFechada = !bocaFechada;
+        moveFantasma();
         if (alvo.contains(player)) {
           alvo.remove(player);
         }
@@ -190,7 +195,8 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         player -= numeroColunas;
         direcao = 'cima';
-        bocaFechada = !bocaFechada; 
+        bocaFechada = !bocaFechada;
+        moveFantasma();
         if (alvo.contains(player)) {
           alvo.remove(player);
         }
@@ -204,10 +210,54 @@ class _HomePageState extends State<HomePage> {
         player += numeroColunas;
         direcao = 'baixo';
         bocaFechada = !bocaFechada;
+        moveFantasma();
         if (alvo.contains(player)) {
           alvo.remove(player);
         }
       });
+    }
+  }
+
+  void moveFantasma() {
+    for (int i = 1; i < 4; i++) {
+      bool movimento = false;
+
+      while (movimento == false) {
+        int valorAleatorio = Random().nextInt(4);
+
+        switch (valorAleatorio) {
+          case 0: //move direita
+            if (!barreiras.contains(posicaoFantasma + 1)) {
+              posicaoFantasma++;
+              movimento = true;
+            }
+            break;
+
+          case 1: //move cima
+            if (!barreiras.contains(posicaoFantasma - numeroColunas)) {
+              posicaoFantasma -= numeroColunas;
+              movimento = true;
+            }
+            break;
+
+          case 2: // move esqueda
+            if (!barreiras.contains(posicaoFantasma - 1)) {
+              posicaoFantasma--;
+              movimento = true;
+            }
+            break;
+
+          case 3: // move baixo
+            if (!barreiras.contains(posicaoFantasma + numeroColunas)) {
+              posicaoFantasma += numeroColunas;
+              movimento = true;
+            }
+            break;
+        }
+        print(valorAleatorio);
+        print(movimento);
+        print(i);
+      }
     }
   }
 
@@ -259,14 +309,14 @@ class _HomePageState extends State<HomePage> {
                     default:
                       return MyPlayer();
                   }
+                } else if (posicaoFantasma == index) {
+                  return MyGhost();
                 } else if (barreiras.contains(index)) {
                   return Mypixel(
                       innerColor: Colors.blue[800],
                       outerColor: Colors.blue[900]);
                   //child: Text(index.toString()));
                 }
-                ;
-
                 if (jogoComecou == true && !alvo.contains(index)) {
                   return MyPath(
                     innerColor: Colors.black,
