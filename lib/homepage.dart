@@ -21,7 +21,6 @@ class _HomePageState extends State<HomePage> {
   int posicaoFantasmaVerde = 20;
   int posicaoFantasmaRosa = 141;
   int posicaoFantasmaAmarelo = 60;
-  //int valorAleatorio = Random().nextInt(3);
 
   List<int> barreiras = [
     0,
@@ -118,67 +117,44 @@ class _HomePageState extends State<HomePage> {
   bool jogoComecou = true;
   bool bocaFechada = false;
 
-  void startGame() {
-    pegarAlvo();
-
-    //Timer.periodic(Duration(milliseconds: 150), (timer) {
-    setState(() {
-      bocaFechada = !bocaFechada;
-    });
-
-    if (alvo.contains(player)) {
-      alvo.remove(player);
-    }
-
-    /*
-      if (player == 43) {
-        //Navigator.push(
-        //  context, MaterialPageRoute(builder: (context) => SegundaTela()));
-
-        barreiras = [21, 32, 54,65,76,87,98,109,131,142,153];
-        pegarAlvo();
-      ////// ZERAR O VETOR DE ALVOS???
-      }*/
-
-    switch (direcao) {
-      case 'esquerda':
-        moveEsquerda();
-        break;
-      case 'direita':
-        moveDireita();
-        break;
-      case 'cima':
-        moveCima();
-        break;
-      case 'baixo':
-        moveBaixo();
-        break;
-    }
-    ;
-  }
-
   void pegarAlvo() {
     for (int i = 0; i < numeroQuadrados; i++) {
       if (!barreiras.contains(i)) {
         alvo.add(i);
+        alvo.remove(player);
       }
     }
+  }
+
+  void portal(destino) {
+    player = destino;
+    alvo.remove(destino);
   }
 
   void moveEsquerda() {
     if (!barreiras.contains(player - 1)) {
       setState(() {
         player--;
+        alvo.remove(player);
         direcao = 'esquerda';
         bocaFechada = !bocaFechada;
+
+        if (player == 33) {
+          portal(43);
+        }
+
+        if (player == 110) {
+          portal(120);
+        }
+
         posicaoFantasmaVermelho = moveFantasma(posicaoFantasmaVermelho);
         posicaoFantasmaVerde = moveFantasma(posicaoFantasmaVerde);
         posicaoFantasmaRosa = moveFantasma(posicaoFantasmaRosa);
         posicaoFantasmaAmarelo = moveFantasma(posicaoFantasmaAmarelo);
-        if (alvo.contains(player)) {
-          alvo.remove(player);
-        }
       });
+    }
+    if (morte == true) {
+      recarregarTela();
     }
   }
 
@@ -186,16 +162,25 @@ class _HomePageState extends State<HomePage> {
     if (!barreiras.contains(player + 1)) {
       setState(() {
         player++;
-        direcao = 'direite';
+        alvo.remove(player);
+        direcao = 'direita';
         bocaFechada = !bocaFechada;
+
+        if (player == 43) {
+          portal(33);
+        }
+
+        if (player == 120) {
+          portal(110);
+        }
         posicaoFantasmaVermelho = moveFantasma(posicaoFantasmaVermelho);
         posicaoFantasmaVerde = moveFantasma(posicaoFantasmaVerde);
         posicaoFantasmaRosa = moveFantasma(posicaoFantasmaRosa);
         posicaoFantasmaAmarelo = moveFantasma(posicaoFantasmaAmarelo);
-        if (alvo.contains(player)) {
-          alvo.remove(player);
-        }
       });
+    }
+    if (morte == true) {
+      recarregarTela();
     }
   }
 
@@ -203,16 +188,17 @@ class _HomePageState extends State<HomePage> {
     if (!barreiras.contains(player - numeroColunas)) {
       setState(() {
         player -= numeroColunas;
+        alvo.remove(player);
         direcao = 'cima';
         bocaFechada = !bocaFechada;
-        posicaoFantasmaVermelho = moveFantasma(posicaoFantasmaVermelho);
-        posicaoFantasmaVerde = moveFantasma(posicaoFantasmaVerde);
-        posicaoFantasmaRosa = moveFantasma(posicaoFantasmaRosa);
-        posicaoFantasmaAmarelo = moveFantasma(posicaoFantasmaAmarelo);
-        if (alvo.contains(player)) {
-          alvo.remove(player);
-        }
       });
+      posicaoFantasmaVermelho = moveFantasma(posicaoFantasmaVermelho);
+      posicaoFantasmaVerde = moveFantasma(posicaoFantasmaVerde);
+      posicaoFantasmaRosa = moveFantasma(posicaoFantasmaRosa);
+      posicaoFantasmaAmarelo = moveFantasma(posicaoFantasmaAmarelo);
+    }
+    if (morte == true) {
+      recarregarTela();
     }
   }
 
@@ -220,16 +206,44 @@ class _HomePageState extends State<HomePage> {
     if (!barreiras.contains(player + numeroColunas)) {
       setState(() {
         player += numeroColunas;
+        alvo.remove(player);
         direcao = 'baixo';
         bocaFechada = !bocaFechada;
-        posicaoFantasmaVermelho = moveFantasma(posicaoFantasmaVermelho);
-        posicaoFantasmaVerde = moveFantasma(posicaoFantasmaVerde);
-        posicaoFantasmaRosa = moveFantasma(posicaoFantasmaRosa);
-        posicaoFantasmaAmarelo = moveFantasma(posicaoFantasmaAmarelo);
-        if (alvo.contains(player)) {
-          alvo.remove(player);
-        }
       });
+      posicaoFantasmaVermelho = moveFantasma(posicaoFantasmaVermelho);
+      posicaoFantasmaVerde = moveFantasma(posicaoFantasmaVerde);
+      posicaoFantasmaRosa = moveFantasma(posicaoFantasmaRosa);
+      posicaoFantasmaAmarelo = moveFantasma(posicaoFantasmaAmarelo);
+    }
+    if (morte == true) {
+      recarregarTela();
+    }
+  }
+
+  void recarregarTela() {
+    player = numeroColunas * 12 + 1;
+    posicaoFantasmaVermelho = 12;
+    posicaoFantasmaVerde = 20;
+    posicaoFantasmaRosa = 141;
+    posicaoFantasmaAmarelo = 60;
+    alvo = [];
+    pegarAlvo();
+    direcao = 'direita';
+    bocaFechada = false;
+    morte = false;
+    setState(() {
+      
+    });
+  }
+
+  bool morte = false;
+
+  checarMorte(int posicaoFantasma) {
+    if (posicaoFantasma == player) {
+      morte = true;
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -237,7 +251,7 @@ class _HomePageState extends State<HomePage> {
     for (int i = 1; i < 4; i++) {
       bool movimento = false;
 
-      while (movimento == false) {
+      while (movimento == false && checarMorte(posicaoFantasma) == false) {
         int valorAleatorio = Random().nextInt(4);
 
         switch (valorAleatorio) {
@@ -269,7 +283,9 @@ class _HomePageState extends State<HomePage> {
             }
             break;
         }
-        print(posicaoFantasma);
+      }
+      if (i == 3) {
+        checarMorte(posicaoFantasma);
       }
     }
     return posicaoFantasma;
@@ -283,7 +299,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Expanded(
             //expande para o tamanho máximo da tela
-            flex: 6, //proporção 1/10 para os demais widget
+            flex: 6, //proporção 1/6 para os demais widget
 
             child: GridView.builder(
               //cria a grade 15x300
@@ -333,10 +349,11 @@ class _HomePageState extends State<HomePage> {
                   return MyGhostAmarelo();
                 } else if (barreiras.contains(index)) {
                   return Mypixel(
-                      innerColor: Colors.blue[800],
+                      innerColor: Colors.blue[100],
                       outerColor: Colors.blue[900]);
                   //child: Text(index.toString()));
                 }
+
                 if (jogoComecou == true && !alvo.contains(index)) {
                   return MyPath(
                     innerColor: Colors.black,
@@ -356,36 +373,36 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               GestureDetector(
-                  onTap: startGame,
+                  onTap: recarregarTela,
                   child: Text('PLAY',
-                      style: TextStyle(color: Colors.white, fontSize: 30))),
+                      style: TextStyle(color: Colors.yellow, fontSize: 40))),
               GestureDetector(
                   onTap: moveEsquerda,
                   child: Icon(
-                    Icons.arrow_left,
+                    Icons.arrow_circle_left_outlined,
                     color: Colors.yellow,
                     size: 70,
                   )),
               GestureDetector(
                   onTap: moveDireita,
                   child: Icon(
-                    Icons.arrow_right,
+                    Icons.arrow_circle_right_outlined,
                     color: Colors.yellow,
                     size: 70,
                   )),
               GestureDetector(
                   onTap: moveCima,
                   child: Icon(
-                    Icons.arrow_drop_up,
+                    Icons.arrow_circle_up,
                     color: Colors.yellow,
                     size: 70,
                   )),
               GestureDetector(
                   onTap: moveBaixo,
                   child: Icon(
-                    Icons.arrow_drop_down,
+                    Icons.arrow_circle_down,
                     color: Colors.yellow,
-                    size: 70,
+                    size: 70,                    
                   ))
             ],
           )),
