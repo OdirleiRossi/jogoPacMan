@@ -6,6 +6,7 @@ import 'package:aprendizado/fantasmas.dart';
 import 'package:aprendizado/path.dart';
 import 'package:aprendizado/pixel.dart';
 import 'package:aprendizado/player.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -131,11 +132,20 @@ class _HomePageState extends State<HomePage> {
     alvo.remove(destino);
   }
 
+  comeralvo(player) {
+    if (alvo.contains(player)) {
+      alvo.remove(player);
+      somAlvo.play(AssetSource('sounds/pellet.wav'));
+    }
+  }
+
   void moveEsquerda() {
     if (!barreiras.contains(player - 1)) {
       setState(() {
         player--;
-        alvo.remove(player);
+        //alvo.remove(player);
+        //somAlvo.play(AssetSource('sounds/pellet.wav'));
+        comeralvo(player);
         direcao = 'esquerda';
         bocaFechada = !bocaFechada;
 
@@ -162,7 +172,9 @@ class _HomePageState extends State<HomePage> {
     if (!barreiras.contains(player + 1)) {
       setState(() {
         player++;
-        alvo.remove(player);
+        //alvo.remove(player);
+        //somAlvo.play(AssetSource('sounds/pellet.wav'));
+        comeralvo(player);
         direcao = 'direita';
         bocaFechada = !bocaFechada;
 
@@ -188,7 +200,9 @@ class _HomePageState extends State<HomePage> {
     if (!barreiras.contains(player - numeroColunas)) {
       setState(() {
         player -= numeroColunas;
-        alvo.remove(player);
+        //alvo.remove(player);
+        //somAlvo.play(AssetSource('sounds/pellet.wav'));
+        comeralvo(player);
         direcao = 'cima';
         bocaFechada = !bocaFechada;
       });
@@ -206,7 +220,9 @@ class _HomePageState extends State<HomePage> {
     if (!barreiras.contains(player + numeroColunas)) {
       setState(() {
         player += numeroColunas;
-        alvo.remove(player);
+        //alvo.remove(player);
+        //somAlvo.play(AssetSource('sounds/pellet.wav'));
+        comeralvo(player);
         direcao = 'baixo';
         bocaFechada = !bocaFechada;
       });
@@ -221,6 +237,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void recarregarTela() {
+
+    if (morte == false) {
+      somAbertura.play(AssetSource('sounds/begin.wav'));
+    }
+
     player = numeroColunas * 12 + 1;
     posicaoFantasmaVermelho = 12;
     posicaoFantasmaVerde = 20;
@@ -231,15 +252,18 @@ class _HomePageState extends State<HomePage> {
     direcao = 'direita';
     bocaFechada = false;
     morte = false;
-    setState(() {
-      
-    });
+    setState(() {});
   }
 
   bool morte = false;
+  final somAbertura = AudioPlayer();
+  final somMorte = AudioPlayer();
+  final somAlvo = AudioPlayer();
 
   checarMorte(int posicaoFantasma) {
     if (posicaoFantasma == player) {
+      somMorte.play(AssetSource('sounds/die.wav'));
+
       morte = true;
       return true;
     } else {
@@ -402,7 +426,7 @@ class _HomePageState extends State<HomePage> {
                   child: Icon(
                     Icons.arrow_circle_down,
                     color: Colors.yellow,
-                    size: 70,                    
+                    size: 70,
                   ))
             ],
           )),
